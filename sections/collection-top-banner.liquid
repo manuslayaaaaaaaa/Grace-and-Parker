@@ -1,0 +1,92 @@
+{% comment %}
+  Collection Top Banner (Lite)
+  - Works without Impact snippets/JS
+  - Shows an image above the collection product grid
+{% endcomment %}
+
+{%- if template.name == 'collection' -%}
+  <section
+    class="collection-top-banner"
+    style="
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    "
+  >
+    {%- assign desktop_img = section.settings.desktop_image -%}
+    {%- assign mobile_img = section.settings.mobile_image | default: desktop_img -%}
+    {%- assign link = section.settings.link -%}
+
+    {%- if desktop_img != blank -%}
+      <style>
+        /* Basic responsive handling */
+        .collection-top-banner__img { display: block; width: 100%; height: auto; }
+        .collection-top-banner__desktop { display: block; }
+        .collection-top-banner__mobile { display: none; }
+
+        @media (max-width: 749px) {
+          .collection-top-banner__desktop { display: none; }
+          .collection-top-banner__mobile { display: block; }
+        }
+      </style>
+
+      {%- capture desktop_image_tag -%}
+        {{ desktop_img | image_url: width: 2000 | image_tag: class: 'collection-top-banner__img', loading: 'eager', fetchpriority: 'high', alt: section.settings.alt_text }}
+      {%- endcapture -%}
+
+      {%- capture mobile_image_tag -%}
+        {{ mobile_img | image_url: width: 1200 | image_tag: class: 'collection-top-banner__img', loading: 'eager', fetchpriority: 'high', alt: section.settings.alt_text }}
+      {%- endcapture -%}
+
+      {%- if link != blank -%}
+        <a href="{{ link }}" aria-label="{{ section.settings.aria_label | escape }}" style="display:block;">
+          <div class="collection-top-banner__desktop">{{ desktop_image_tag }}</div>
+          <div class="collection-top-banner__mobile">{{ mobile_image_tag }}</div>
+        </a>
+      {%- else -%}
+        <div class="collection-top-banner__desktop">{{ desktop_image_tag }}</div>
+        <div class="collection-top-banner__mobile">{{ mobile_image_tag }}</div>
+      {%- endif -%}
+    {%- endif -%}
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Collection top banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop banner image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile banner image (optional)"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link (optional)"
+    },
+    {
+      "type": "text",
+      "id": "alt_text",
+      "label": "Alt text",
+      "default": "Collection banner"
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "Link label (accessibility)",
+      "default": "Open banner link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection top banner (lite)"
+    }
+  ]
+}
+{% endschema %}
